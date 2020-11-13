@@ -589,12 +589,22 @@
 			  newTitle.innerText=movieCategories[i]
 			  container.appendChild(newTitle)
 			let newRow = document.createElement("div");
-              newRow.classList.add("row", "flex", "mb-2", "no-gutters");
-			  newRow.innerHTML = `<div class="flexwrap w-100">
-				</div>`
-				container.appendChild(newRow)
+			  newRow.classList.add("row", "flex", "mb-2", "no-gutters");
+			  container.appendChild(newRow)
+			  let newFlex = document.createElement("div")
+			  newFlex.classList.add("flexwrap", "w-100")
+			newRow.appendChild(newFlex)
 			  
 
+
+
+			/* <div class="container mw-100">
+			<h3 class="text-white mt-4"><a href="#">Trending Now</a></h3>
+			<div class="row flex mb-2 no-gutters">
+				<div class="flexwrap w-100">
+					<div class="film mr-1">
+						<img class="img-fluid" src="movies/2-4.jpg" />
+					</div> */
 
 
 			  let response = await fetch(
@@ -611,10 +621,10 @@
 
 			if (movies.length > 0) {
             movies.forEach((e) => {
-              let newCol = document.createElement("div");
-              newCol.classList.add("film", "mr-1");
-              newCol.innerHTML = `<img class="img-fluid" src="${e.imageUrl}" />`
-            newRow.appendChild(newCol);
+              let newFilm = document.createElement("div");
+              newFilm.classList.add("film", "mr-1");
+              newFilm.innerHTML = `<img class="img-fluid" src="${e.imageUrl}" />`
+            newFlex.appendChild(newFilm);
 			});
 		
           } else {
