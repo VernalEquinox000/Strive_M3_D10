@@ -311,6 +311,13 @@
                   value="Submit Movie"
                 >
                   Submit Movie
+
+                  <span
+                    class="spinner-border spinner-border-sm d-none"
+                    role="status"
+                    aria-hidden="true"
+                    id="loadingSpinner"
+                  ></span>
                 </button>
               </div>
             </form>
@@ -325,27 +332,15 @@
       window.onload = async () => {
         let url = new URLSearchParams(window.location.search);
 
-        idCat = url.get("id");
-
-        idCat = idCat.split("?");
-
-        firstID = idCat[0];
-
-        secondCat = idCat[1];
-
-        secondCat = secondCat.split("=");
-
-        id = firstID;
-
-        category = secondCat[1];
+        whatIget = url.get("id");
+        id = whatIget.slice(0, 24);
+        category = whatIget.slice(34);
         console.log(id);
         console.log(category);
 
         if (id) {
           let response = await fetch(
-            "https://striveschool-api.herokuapp.com/api/movies/" +
-              id +
-              category,
+            "https://striveschool-api.herokuapp.com/api/movies/" + category,
             {
               method: "GET",
               headers: {
@@ -354,12 +349,22 @@
               },
             }
           );
-          let movie = await response.json();
-          console.log(movie);
-          document.querySelector("#name").value = movie.name;
-          document.querySelector("#category").value = movie.category;
-          document.querySelector("#description").value = movie.description;
-          document.querySelector("#imageUrl").value = movie.imageUrl;
+          let movies = await response.json();
+          console.log(movies);
+          //let container = document.querySelector("#details");
+          let theMovie;
+          for (let i = 0; i < movies.length; i++) {
+            //console.log(movies[i]._id);
+            if (movies[i]._id === id) {
+              theMovie = movies[i];
+              console.log(theMovie);
+              document.querySelector("#name").value = theMovie.name;
+              document.querySelector("#category").value = theMovie.category;
+              document.querySelector("#description").value =
+                theMovie.description;
+              document.querySelector("#imageUrl").value = theMovie.imageUrl;
+            }
+          }
         }
       };
 
@@ -369,6 +374,8 @@
       };
 
       const addMovie = async () => {
+        let spinner = document.querySelector("#loadingSpinner");
+        spinner.classList.toggle("d-none");
         let myMovie = {
           //"_id": "5d3598a3a38caa57a0272d33", //SERVER GENERATED
           /* name: "app test 1",
@@ -387,25 +394,47 @@
         };
 
         try {
-          let response = await fetch(
-            "https://striveschool-api.herokuapp.com/api/movies/",
-            {
-              method: "POST",
-              body: JSON.stringify(myMovie),
-              headers: {
-                Authorization:
-                  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          console.log(response);
+          let response;
+
+          if (id) {
+            response = await fetch(
+              "https://striveschool-api.herokuapp.com/api/movies/" + id,
+              {
+                method: "PUT",
+                body: JSON.stringify(myMovie),
+                headers: {
+                  Authorization:
+                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log(response);
+          } else {
+            response = await fetch(
+              "https://striveschool-api.herokuapp.com/api/movies/",
+              {
+                method: "POST",
+                body: JSON.stringify(myMovie),
+                headers: {
+                  Authorization:
+                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log(response);
+          }
 
           if (response.ok) {
-            alert("New movie added successfully");
+            spinner.classList.toggle("d-none"); // hiding the spinner
+            alert(`Movie ${id ? "updated" : "created"} successfully`);
             location.assign("index.html");
           } else {
+            spinner.classList.toggle("d-none");
             alert("Ooops, something went wrong!");
+            let error = await response.json(); //with these two lines of code
+            console.log(error);
           }
         } catch (error) {
           console.log(error);
