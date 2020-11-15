@@ -613,7 +613,7 @@
             movies.forEach((e) => {
               let newFilm = document.createElement("div");
               newFilm.classList.add("film", "mr-1");
-			  newFilm.innerHTML = `<a href="detail.html?id=${e._id}&category=${e.category}"><img class="img-fluid" src="${e.imageUrl}" /></a>`
+			  newFilm.innerHTML = `<a href="details.html?id=${e._id}?category=${e.category}"><img class="img-fluid" src="${e.imageUrl}" /></a>`
             newFlex.appendChild(newFilm);
 			});
 		

@@ -379,49 +379,77 @@
     </section>
 
     <script>
-      let id;
-
-      //const url = "https://striveschool-api.herokuapp.com/api/product/";
-
       window.onload = async () => {
-        let urlParams = new URLSearchParams(window.location.search);
+        let url = new URLSearchParams(window.location.search);
 
-        id = urlParams.get("id");
-        //try + parentesi
-        let response = await fetch(
-          "https://striveschool-api.herokuapp.com/api/movies/",
-          {
-            method: "GET",
-            headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
-            },
-          }
-        );
+        whatIget = url.get("id");
+        id = whatIget.slice(0, 24);
+        category = whatIget.slice(34);
+        console.log(id);
+        console.log(category);
 
-        let movieCategories = await response.json();
-        console.log(movieCategories);
-        if (movieCategories.length > 0) {
-          for (let i = 0; i < movieCategories.length; i++) {
-            let response = await fetch(
-              "https://striveschool-api.herokuapp.com/api/movies/" +
-                movieCategories[i],
-              {
-                method: "GET",
-                headers: {
-                  Authorization:
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
-                },
-              }
-            );
-            let movies = await response.json();
-            console.log(movies);
-            movies.forEach((e) => {
-              let filteredMovie = movies.filter((movie) => movie["_id"] === id);
-              console.log(filteredMovie);
-            });
+        try {
+          let response = await fetch(
+            "https://striveschool-api.herokuapp.com/api/movies/" + category,
+            {
+              method: "GET",
+              headers: {
+                Authorization:
+                  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
+              },
+            }
+          );
+          let movies = await response.json();
+          console.log(movies);
+          //let container = document.querySelector("#details");
+          let theMovie;
+          for (let i = 0; i < movies.length; i++) {
+            //console.log(movies[i]._id);
+            if (movies[i]._id === id) {
+              theMovie = movies[i];
+
+              let movieCard = document.createElement("div");
+              movieCard.classList.add("film", "mr-1");
+              movieCard.innerHTML = `<img class="img-fluid" src="${theMovie.imageUrl}" />
+                                    <p class="text-white">${theMovie.name}<br>
+                                ${theMovie.category}<br>
+                                ${theMovie.description}<br>`;
+
+              document.querySelector("#details").appendChild(movieCard);
+            }
           }
+        } catch (error) {
+          alert("Something went wrong BEFORE");
         }
+      };
+
+      const handleDelete = async () => {
+        try {
+          const response = await fetch(
+            "https://striveschool-api.herokuapp.com/api/movies/" + id,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization:
+                  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFiZWMwMTRiY2RlMTAwMTc2MTZhZTQiLCJpYXQiOjE2MDUxOTIxMzIsImV4cCI6MTYwNjQwMTczMn0.vNzVEWvdvSoQVxyBhey01H7IMxOsoyRVHB--axl5SWo ",
+              },
+            }
+          );
+
+          if (response.ok) {
+            // checking the ok property which stores the successful result of the operation
+            alert("Product deleted successfully");
+            location.assign("index.html");
+          } else {
+            alert("Something went wrong AFTER!");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      const handleEdit = () => {
+        location.href = "backoffice.html?id=" + id;
       };
     </script>
 
