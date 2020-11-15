@@ -332,13 +332,17 @@
       window.onload = async () => {
         let url = new URLSearchParams(window.location.search);
 
-        whatIget = url.get("id");
-        id = whatIget.slice(0, 24);
-        category = whatIget.slice(34);
+        let whatIget = url.get("id");
+        let id = "";
+        let category = "";
+        /* let id = whatIget.slice(0, 24);
+        let category = whatIget.slice(34);
         console.log(id);
-        console.log(category);
+        console.log(category); */
 
-        if (id) {
+        if (whatIget) {
+          id = whatIget.slice(0, 24);
+          category = whatIget.slice(34);
           let response = await fetch(
             "https://striveschool-api.herokuapp.com/api/movies/" + category,
             {
@@ -392,11 +396,18 @@
           category: document.getElementById("category").value,
           imageUrl: document.getElementById("imageUrl").value,
         };
+        let url = new URLSearchParams(window.location.search);
+        let id = "";
+        let category = "";
+
+        let whatIget = url.get("id");
 
         try {
           let response;
 
-          if (id) {
+          if (whatIget) {
+            id = whatIget.slice(0, 24);
+            category = whatIget.slice(34);
             response = await fetch(
               "https://striveschool-api.herokuapp.com/api/movies/" + id,
               {
@@ -409,6 +420,7 @@
                 },
               }
             );
+
             console.log(response);
           } else {
             response = await fetch(
